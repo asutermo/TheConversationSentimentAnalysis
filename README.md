@@ -5,5 +5,3 @@ Sentiment Analysis on TheConversation. Very, very early in-progress
 
 [The Conversation](https://theconversation.com/us/feeds)
 
-
-## Flask App
