@@ -24,7 +24,6 @@ async def analyze_article(title:str, url: str) -> TextBlobArticleSentiment:
     if article_body_html:
         article_body = article_body_html.get_text(strip=False)
     else:
-        print("The specified div was not found.")
         return None
     
     blob = TextBlob(article_body)

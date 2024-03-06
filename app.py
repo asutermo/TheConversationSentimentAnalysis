@@ -21,7 +21,7 @@ async def article(title: str):
     if summary:
         return render_template('article.html', summary=summary)
     else:
-        return render_template('404.html', summary=summary)
+        return render_template('404.html')
 
 if __name__ == '__main__':
     app.run()
