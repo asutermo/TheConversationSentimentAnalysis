@@ -13,7 +13,7 @@ FEED_URL = 'https://theconversation.com/articles.atom?language=en'
 async def analyze_rss_feed_titles() -> List[TextBlobArticleSentiment]:
     feed = feedparser.parse(FEED_URL)
     title_blobs =  [(entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries]
-    return [(TextBlobArticleSentiment(title, link, blob.sentiment.polarity, blob.sentiment.subjectivity)) for title, link, blob in title_blobs]
+    return [(TextBlobArticleSentiment(title, link, blob.sentiment.polarity, blob.sentiment.subjectivity, None)) for title, link, blob in title_blobs]
 
    
 async def analyze_article(title:str, url: str) -> TextBlobArticleSentiment:
@@ -22,10 +22,10 @@ async def analyze_article(title:str, url: str) -> TextBlobArticleSentiment:
     article_body_html = soup.find('div', itemprop='articleBody')
     
     if article_body_html:
-        article_body = article_body_html.get_text(strip=True)
+        article_body = article_body_html.get_text(strip=False)
     else:
         print("The specified div was not found.")
         return None
     
     blob = TextBlob(article_body)
-    return TextBlobArticleSentiment(title, url, blob.sentiment.polarity, blob.sentiment.subjectivity)
+    return TextBlobArticleSentiment(title, url, blob.sentiment.polarity, blob.sentiment.subjectivity, article_body)

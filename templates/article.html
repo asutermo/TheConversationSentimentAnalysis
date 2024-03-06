@@ -3,7 +3,10 @@
 {% block content %}
     <h1>{% block title %} Index {% endblock %}</h1>
     <h1>{{summary.title}}</h1>
-    <a href="{{summary.link}}">Article</a>
+    <h4></h4><a href="{{summary.link}}">Article</a></h4>
+    <div>
     Polarity: {{summary.polarity}} <br />
     Subjectivity: {{summary.subjectivity}} <br />
+    </div><br /><br />
+    {{summary.text}}
 {% endblock %}
