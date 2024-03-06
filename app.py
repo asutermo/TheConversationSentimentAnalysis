@@ -1,8 +1,10 @@
-from flask import Flask, abort, render_template, request
+from quart import Quart, abort, render_template, request
+from quart_schema import QuartSchema
 
 from scripts import basic_sentiment, test
 
-app = Flask(__name__)
+app = Quart(__name__)
+QuartSchema(app)
 
 @app.errorhandler(404)
 def not_found(e):
