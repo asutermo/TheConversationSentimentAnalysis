@@ -3,6 +3,7 @@ from dataclasses import dataclass
 @dataclass
 class TextBlobArticleSentiment:
     title: str
+    link: str
     polarity: float
     subjectivity: float
 
