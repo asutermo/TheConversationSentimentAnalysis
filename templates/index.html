@@ -6,6 +6,6 @@
     <h2>Welcome to Sentiment Analysis!</h2>
     <h3>{{ utc_dt }}</h3>
     {% for summary in summaries %}
-        <a href="{{summary.link}}">{{summary.title}}</a> Polarity: {{summary.polarity}}, Subjectivity: {{summary.subjectivity}}<br>
+        <a href="/article/{{summary.title}}?link={{summary.link}}">{{summary.title}}</a> Polarity: {{summary.polarity}}, Subjectivity: {{summary.subjectivity}}<br>
     {% endfor %}
 {% endblock %}

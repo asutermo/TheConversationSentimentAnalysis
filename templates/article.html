@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Index {% endblock %}</h1>
+    <h1>{{summary.title}}</h1>
+    <a href="{{summary.link}}">Article</a>
+    Polarity: {{summary.polarity}} <br />
+    Subjectivity: {{summary.subjectivity}} <br />
+{% endblock %}
