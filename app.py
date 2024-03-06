@@ -1,7 +1,7 @@
 from quart import Quart, abort, render_template, request
 from quart_schema import QuartSchema
 
-from scripts import basic_sentiment, test
+from scripts import basic_sentiment
 
 app = Quart(__name__)
 QuartSchema(app)
