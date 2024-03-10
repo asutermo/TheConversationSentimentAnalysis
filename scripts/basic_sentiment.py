@@ -6,7 +6,7 @@ import feedparser
 from textblob import TextBlob
 
 from . import ArticleSentiment
-from .summarize import summarize
+from .summarize import summarize_light
 
 # Set feed url, parse it, then check polarity and subjectivity of each article's title
 FEED_URL = 'https://theconversation.com/articles.atom?language=en'
@@ -32,5 +32,6 @@ async def analyze_article(title:str, url: str) -> ArticleSentiment:
         return None
     
     blob = TextBlob(article_body)
-    summary = summarize(article_body)
+    summary = summarize_light(article_body)
+    print (summary)
     return ArticleSentiment(title, url, blob.sentiment.polarity, blob.sentiment.subjectivity, article_body, summary)
