@@ -1,6 +1,6 @@
 from transformers import pipeline
 
-
+# todo use transformers.js
 def summarize(article_text: str) -> str:
     """Uses a fine-tuned T5 small for text summaries"""
     summarizer = pipeline("summarization", model="Falconsai/text_summarization")

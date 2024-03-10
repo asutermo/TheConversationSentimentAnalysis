@@ -11,6 +11,8 @@ from .summarize import summarize
 # Set feed url, parse it, then check polarity and subjectivity of each article's title
 FEED_URL = 'https://theconversation.com/articles.atom?language=en'
 
+# TODO: async soup and parsing
+
 async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
     """Takes an RSS feed, checks title for subjectivity and polarity and returns a list of ArticleSentiments"""
     feed = feedparser.parse(FEED_URL)
