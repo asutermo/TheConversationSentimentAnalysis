@@ -4,6 +4,6 @@
     <h1>{% block title %} Index {% endblock %}</h1>
     <h2>Welcome to Sentiment Analysis!</h2>
     {% for summary in summaries %}
-        <a href="/article/{{summary.title}}?link={{summary.link}}">{{summary.title}}</a> Polarity: {{summary.polarity}}, Subjectivity: {{summary.subjectivity}}<br>
+        <a href="/article/{{summary.internal_link}}?link={{summary.original_link}}">{{summary.title}}</a> Polarity: {{summary.polarity}}, Subjectivity: {{summary.subjectivity}}<br>
     {% endfor %}
 {% endblock %}

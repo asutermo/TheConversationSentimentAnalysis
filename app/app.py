@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import requests
 from typing import List
+import urllib
 
 from bs4 import BeautifulSoup
 import feedparser
@@ -16,7 +17,8 @@ QuartSchema(app)
 @dataclass
 class ArticleSentiment:
     title: str
-    link: str
+    internal_link: str
+    original_link: str
     polarity: float
     subjectivity: float
     text: str = None
@@ -32,14 +34,14 @@ async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
     """Takes an RSS feed, checks title for subjectivity and polarity and returns a list of ArticleSentiments"""
     feed = feedparser.parse(FEED_URL)
     title_blobs =  [(entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries]
-    return [(ArticleSentiment(title, link, blob.sentiment.polarity, blob.sentiment.subjectivity)) for title, link, blob in title_blobs]
+    return [(ArticleSentiment(title, urllib.parse.quote_plus(title), link, blob.sentiment.polarity, blob.sentiment.subjectivity)) for title, link, blob in title_blobs]
 
 async def analyze_article(title:str, url: str) -> ArticleSentiment:
     """Takes an article from The Conversation, grabs article text, and does both TextBlob and T5 analysis on it"""
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     article_body_html = soup.find('div', itemprop='articleBody')
-    
+
     if article_body_html:
         article_body = article_body_html.get_text(strip=False)
     else:
@@ -47,13 +49,16 @@ async def analyze_article(title:str, url: str) -> ArticleSentiment:
     
     blob = TextBlob(article_body)
     summary = summarize_light(article_body)
-    return ArticleSentiment(title, url, blob.sentiment.polarity, blob.sentiment.subjectivity, article_body, summary)
+    return ArticleSentiment(title, url, url, blob.sentiment.polarity, blob.sentiment.subjectivity, article_body, summary)
 
 # Could use transformers.js for heavy lifting, but for now the model is loaded on launch
 def summarize_light(article_text: str) -> str:
     """Uses FB Bart Large for text summaries"""
-    results = SUMMARIZER(article_text[:1024], max_length=1024, min_length=30, do_sample=False)
-    return results[0]['summary_text']
+    art_len = len(article_text)
+    article_text_trim = article_text[:min(art_len, 1024)]
+    results = SUMMARIZER(article_text_trim, max_length=min(art_len, 1024), min_length=30, do_sample=False)
+    entry = results[0]
+    return entry['summary_text']
 
 @app.errorhandler(404)
 async def not_found(e):
@@ -72,7 +77,10 @@ async def internal_server_error(e):
 async def index():
     """Just show article titles, and polarity/subjectivity"""
     summaries = await analyze_rss_feed_titles()
-    return await render_template('index.html', summaries=summaries), 200
+    for summary in summaries:
+        summary.internal_link = urllib.parse.quote_plus(summary.internal_link)
+        summary.original_link = urllib.parse.quote_plus(summary.original_link)
+    return await render_template('index.html', summaries=summaries[1:]), 200
 
 @app.route('/about/')
 async def about():
@@ -82,7 +90,8 @@ async def about():
 @app.route('/article/<title>')
 async def article(title: str):
     """Take an article, and do a deep dive on the content."""
-    true_link = request.args.get('link')
+    true_link = urllib.parse.unquote_plus(request.args.get('link'))
+    title = urllib.parse.unquote_plus(urllib.parse.unquote_plus(title))
     summary = await analyze_article(title=title, url=true_link)
     if summary:
         return await render_template('article.html', summary=summary), 200
