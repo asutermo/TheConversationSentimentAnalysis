@@ -3,7 +3,7 @@ FROM python:3.9
 COPY requirements_light.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
-ENV PORT=8080
+ENV PORT=5000
 ENV QUART_DIR=/app
 ENV QUART_APP=app:app
 
