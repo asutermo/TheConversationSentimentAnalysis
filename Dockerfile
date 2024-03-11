@@ -1,7 +1,7 @@
 FROM python:3.9
 
-COPY ./requirements.txt /tmp/requirements.txt
-RUN pip install -r ./tmp/requirements.txt
+COPY requirements_light.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
 ENV PORT=8080
 ENV QUART_DIR=/app
