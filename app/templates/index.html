@@ -1,9 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Index {% endblock %}</h1>
-    <h2>Welcome to Sentiment Analysis!</h2>
-    {% for summary in summaries %}
-        <a href="/article/{{summary.internal_link}}?link={{summary.original_link}}">{{summary.title}}</a> Polarity: {{summary.polarity}}, Subjectivity: {{summary.subjectivity}}<br>
-    {% endfor %}
+    <div>
+        <h1>{% block title %} Index {% endblock %}</h1>
+        <h2>Welcome to Sentiment Analysis!</h2>    
+    </div>
+    <div id="feed"></div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:5000/ws/feed');
+
+        ws.onopen = function() {
+            console.log('WebSocket connection established');
+        };
+        
+
+        ws.onmessage = function(event) {
+            // Parse the JSON data
+            const summaries = JSON.parse(event.data);
+            console.log(summaries);
+            // Display the user information in the web page
+            const feedDiv = document.getElementById('feed');
+
+       
+            summaries.forEach(function(item, index) {
+                const anchor = document.createElement('a');
+                
+                anchor.href = `/article/${item.internal_link}?link=${item.original_link}`;
+                anchor.textContent = `${item.title}`;
+                feedDiv.appendChild(anchor);
+                const textNode = document.createTextNode(` Polarity: ${item.polarity}, Subjectivity: ${item.subjectivity}`);
+                feedDiv.appendChild(textNode)
+                const lineBreak = document.createElement('br');
+                feedDiv.appendChild(lineBreak);
+            });
+
+        };
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+    </script>
+
 {% endblock %}

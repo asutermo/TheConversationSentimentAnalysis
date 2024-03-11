@@ -1,7 +1,7 @@
 import pytest
 from quart import Quart, url_for
 from quart.testing import QuartClient
-from . import app 
+from .app import app 
 
 @pytest.mark.asyncio
 async def test_index():

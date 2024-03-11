@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 import requests
 from typing import List
 import urllib
@@ -6,7 +6,7 @@ import urllib
 from bs4 import BeautifulSoup
 import feedparser
 
-from quart import Quart, abort, render_template, request
+from quart import Quart, abort, render_template, request, websocket
 from quart_schema import QuartSchema
 from textblob import TextBlob
 from transformers import pipeline
@@ -34,7 +34,7 @@ async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
     """Takes an RSS feed, checks title for subjectivity and polarity and returns a list of ArticleSentiments"""
     feed = feedparser.parse(FEED_URL)
     title_blobs =  [(entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries]
-    return [(ArticleSentiment(title, urllib.parse.quote_plus(title), link, blob.sentiment.polarity, blob.sentiment.subjectivity)) for title, link, blob in title_blobs]
+    return [(asdict(ArticleSentiment(title, urllib.parse.quote_plus(title), link, blob.sentiment.polarity, blob.sentiment.subjectivity))) for title, link, blob in title_blobs]
 
 async def analyze_article(title:str, url: str) -> ArticleSentiment:
     """Takes an article from The Conversation, grabs article text, and does both TextBlob and T5 analysis on it"""
@@ -76,11 +76,12 @@ async def internal_server_error(e):
 @app.route('/')
 async def index():
     """Just show article titles, and polarity/subjectivity"""
-    summaries = await analyze_rss_feed_titles()
-    for summary in summaries:
-        summary.internal_link = urllib.parse.quote_plus(summary.internal_link)
-        summary.original_link = urllib.parse.quote_plus(summary.original_link)
-    return await render_template('index.html', summaries=summaries[1:]), 200
+    # summaries = await analyze_rss_feed_titles()
+    # for summary in summaries:
+    #     summary.internal_link = urllib.parse.quote_plus(summary.internal_link)
+    #     summary.original_link = urllib.parse.quote_plus(summary.original_link)
+    # return await render_template('index.html', summaries=summaries[1:]), 200
+    return await render_template('index.html'), 200
 
 @app.route('/about/')
 async def about():
@@ -99,6 +100,10 @@ async def article(title: str):
         app.logger.info('User tried to access %s which didn\'t exist.', true_link)
         abort(404)
 
+@app.websocket('/ws/feed')
+async def feed():
+    summaries = await analyze_rss_feed_titles()
+    await websocket.send_json(summaries)
 
 if __name__ == '__main__':
     app.run()
