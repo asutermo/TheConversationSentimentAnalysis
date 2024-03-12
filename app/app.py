@@ -22,8 +22,10 @@ class ArticleSentiment:
     text: str = None
     summarization: str = None
 
-    def __str__(self):
-        return f"{self.title} - Polarity: {self.polarity}, Subjectivity: {self.subjectivity}"
+@dataclass
+class ArticleSummarizationRequest:
+    title: str
+    url: str
 
 FEED_URL = 'https://theconversation.com/articles.atom?language=en'
 SUMMARIZER = pipeline("summarization", model="facebook/bart-large-cnn")
@@ -92,14 +94,12 @@ async def feed():
     await websocket.send_json(summaries)
 
 @app.websocket('/ws/summarize')
+
 async def summarize():
     while True:
-        data = await websocket.receive_json()
-        # todo: check shape
-        article_url = data['url']
-        article_title = data['title']
-        summary = await analyze_article(title=article_title, url=article_url)
-        await websocket.send_json(asdict(summary))
+        data = await websocket.receive_as(ArticleSummarizationRequest)
+        summary = await analyze_article(title=data.title, url=data.url)
+        await websocket.send_as(summary, ArticleSentiment)
 
 if __name__ == '__main__':
     app.run()
