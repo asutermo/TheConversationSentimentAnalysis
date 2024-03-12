@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %}Article{% endblock %} 
 
 {% block content %}
     <h1 id="article_title"></h1>
@@ -37,13 +38,17 @@
                 content_div.appendChild(textNode);
 
                 lineBreak = document.createElement('br');
-                content_div.appendChild(lineBreak);       
+                content_div.appendChild(lineBreak);
+                lineBreak = document.createElement('br');
+                content_div.appendChild(lineBreak);
 
                 const summaryTextNode = document.createTextNode(`Summarization: ${article_summary.summarization}`);
                 content_div.appendChild(summaryTextNode);
 
                 lineBreak = document.createElement('br');
-                content_div.appendChild(lineBreak);       
+                content_div.appendChild(lineBreak);
+                lineBreak = document.createElement('br');
+                content_div.appendChild(lineBreak);
 
                 const articleTextNode = document.createTextNode(`Article Text: ${article_summary.text}`);
                 content_div.appendChild(articleTextNode);
