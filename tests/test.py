@@ -1,6 +1,14 @@
+import asyncio
 import pytest
 
 from ..app.app import app
+pytest_plugins = ('pytest_asyncio',)
+
+
+async def test_app(app):
+    client = app.test_client()
+    response = await client.get('/')
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
