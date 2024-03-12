@@ -13,4 +13,5 @@ textblob==0.18.0.post0
 torch==2.0.1
 torchaudio==2.0.2
 torchvision==0.15.2
+tox==4.14.1
 transformers==4.38.2
