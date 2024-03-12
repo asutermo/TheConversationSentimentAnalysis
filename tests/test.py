@@ -1,10 +1,11 @@
 import pytest
 
-from ..app.app import app
+from app.app import app
 
 pytest_plugins = ("pytest_asyncio",)
 
 
+@pytest.mark.asyncio
 async def test_app(app):
     client = app.test_client()
     response = await client.get("/")
@@ -45,3 +46,8 @@ async def test_article_with_invalid_link():
     test_client = app.test_client()
     response = await test_client.get("/article/invalid_title")
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_coverage():
+    await app.test_coverage()

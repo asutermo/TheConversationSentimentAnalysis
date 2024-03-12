@@ -135,5 +135,9 @@ async def summarize() -> None:
         await websocket.send_as(summary, ArticleSentiment)
 
 
+async def test_coverage():
+    print("woo")
+
+
 if __name__ == "__main__":
     app.run()
