@@ -29,6 +29,7 @@ class ArticleSummarizationRequest:
     title: str
     url: str
 
+
 FEED_URL = 'https://theconversation.com/articles.atom?language=en'
 
 
