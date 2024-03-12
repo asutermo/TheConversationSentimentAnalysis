@@ -1,4 +1,3 @@
-import asyncio
 import pytest
 
 from ..app.app import app
