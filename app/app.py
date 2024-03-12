@@ -136,7 +136,7 @@ async def summarize() -> None:
 
 
 async def test_coverage():
-    print("woo")
+    pass
 
 
 if __name__ == "__main__":
