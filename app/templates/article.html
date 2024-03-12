@@ -1,14 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Index {% endblock %}</h1>
-    <h1>{{summary.title}}</h1>
-    <h4></h4><a href="{{summary.original_link}}">Article</a></h4>
+    <h1 id="article_title"></h1>
+    <h4><a href="" id="article_link">Article</a></h4>
     <br />
-    <div>
-    Polarity: {{summary.polarity}} <br />
-    Subjectivity: {{summary.subjectivity}} <br />
-    Summary: {{summary.summarization}} <br />
-    </div><br /><br />
-    {{summary.text}}
+    <script>
+        console.log(window.location.pathname);
+        article_title = decodeURIComponent(window.location.pathname).replace('/article/', '').replace('+', ' ');
+        const titleHeader = document.getElementById('article_title');
+        titleHeader.textContent = article_title;
+        const params = new URLSearchParams(window.location.search);
+        article_url = decodeURIComponent(params.get('link'));
+        const articleHref = document.getElementById('article_link')
+        articleHref.href = article_url;
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const ws = new WebSocket('ws://localhost:5000/ws/summarize');
+    
+            ws.onopen = function() {
+                console.log('WebSocket connection established');
+
+                // Send data to the server
+                ws.send(JSON.stringify({title: article_title, url: article_url}));
+            };
+   
+            ws.onmessage = function(event) {
+                // Parse the JSON data
+                const article_summary = JSON.parse(event.data);
+
+                const content_div = document.getElementById('article_content');
+
+                lineBreak = document.createElement('br');
+                content_div.appendChild(lineBreak);       
+
+                const textNode = document.createTextNode(`Polarity: ${article_summary.polarity}, Subjectivity: ${article_summary.subjectivity}`);
+                content_div.appendChild(textNode);
+
+                lineBreak = document.createElement('br');
+                content_div.appendChild(lineBreak);       
+
+                const summaryTextNode = document.createTextNode(`Summarization: ${article_summary.summarization}`);
+                content_div.appendChild(summaryTextNode);
+
+                lineBreak = document.createElement('br');
+                content_div.appendChild(lineBreak);       
+
+                const articleTextNode = document.createTextNode(`Article Text: ${article_summary.text}`);
+                content_div.appendChild(articleTextNode);
+            };
+        
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+    
+            ws.onclose = function() {
+                console.log('WebSocket connection closed');
+            };
+        });
+    </script>
+    <div id="article_content"></div>
 {% endblock %}
