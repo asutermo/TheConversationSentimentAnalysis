@@ -89,13 +89,12 @@ async def article(title: str):
     return await render_template('article.html'), 200
 
 @app.websocket('/ws/feed')
-async def feed():
+async def feed() -> None:
     summaries = await analyze_rss_feed_titles()
-    await websocket.send_json(summaries)
+    await websocket.send_as(summaries, List[ArticleSentiment])
 
 @app.websocket('/ws/summarize')
-
-async def summarize():
+async def summarize() -> None:
     while True:
         data = await websocket.receive_as(ArticleSummarizationRequest)
         summary = await analyze_article(title=data.title, url=data.url)
