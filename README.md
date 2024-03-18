@@ -14,3 +14,7 @@ To run locally:
 cd app
 hypercorn --reload --bind 0.0.0.0:5000 --workers 1 app:app
 ```
+
+## Tests and Formatting
+
+I utilize tox for formatting and cleanliness. To run, go to the root of the repo and run 'tox' to run the tests/formatting.
