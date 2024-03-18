@@ -22,7 +22,7 @@
             // Display the user information in the web page
             const feedDiv = document.getElementById('feed');
 
-            summaries.forEach(function(item, index) {
+            summaries.articles.forEach(function(item, index) {
                 const anchor = document.createElement('a');
                 
                 anchor.href = `/article/${item.title}?link=${item.original_link}`;
