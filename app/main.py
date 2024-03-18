@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from logging.config import dictConfig
 from typing import List
 
-import feedparser
-import requests
-from bs4 import BeautifulSoup
-from quart import Quart, render_template, websocket
-from quart_schema import QuartSchema
-from textblob import TextBlob
-from transformers import pipeline
+import feedparser  # type: ignore
+import requests  # type: ignore
+from bs4 import BeautifulSoup  # type: ignore
+from quart import Quart, render_template, websocket  # type: ignore
+from quart_schema import QuartSchema  # type: ignore
+from textblob import TextBlob  # type: ignore
+from transformers import pipeline  # type: ignore
 
 app = Quart(__name__)
 QuartSchema(app)
@@ -32,8 +32,8 @@ class ArticleSentiment:
     original_link: str
     polarity: float
     subjectivity: float
-    text: str = ''
-    summarization: str = ''
+    text: str = ""
+    summarization: str = ""
 
 
 @dataclass

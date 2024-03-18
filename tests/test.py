@@ -1,6 +1,6 @@
 import pytest
 
-from app.app import app
+from TheConversationSentimentAnalysis.app.main import app
 
 pytest_plugins = ("pytest_asyncio",)
 
