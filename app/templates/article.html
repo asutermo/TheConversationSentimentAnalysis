@@ -5,8 +5,8 @@
     <h1 id="article_title"></h1>
     <h4><a href="" id="article_link">Article</a></h4>
     <br />
+
     <script>
-        console.log(window.location.pathname);
         article_title = decodeURIComponent(window.location.pathname).replace('/article/', '').replace('+', ' ');
         const titleHeader = document.getElementById('article_title');
         titleHeader.textContent = article_title;
@@ -17,7 +17,9 @@
 
         document.addEventListener('DOMContentLoaded', (event) => {
             const ws = new WebSocket('ws://localhost:5000/ws/summarize');
-    
+            const spinner_div = document.getElementById('spinner');
+            spinner_div.style.display = 'block';
+
             ws.onopen = function() {
                 console.log('WebSocket connection established');
 
@@ -28,6 +30,7 @@
             ws.onmessage = function(event) {
                 // Parse the JSON data
                 const article_summary = JSON.parse(event.data);
+                spinner_div.style.display = none;
 
                 const content_div = document.getElementById('article_content');
 
@@ -63,5 +66,6 @@
             };
         });
     </script>
+    <div class="spinner" id="spinner"></div>
     <div id="article_content"></div>
 {% endblock %}
