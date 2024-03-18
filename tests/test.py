@@ -51,3 +51,11 @@ async def test_article_with_invalid_link():
 @pytest.mark.asyncio
 async def test_coverage():
     await app.test_coverage()
+
+
+@pytest.mark.asyncio
+async def test_ws_feed():
+    test_client = app.test_client()
+    async with test_client.websocket("/ws/feed") as test_websocket:
+        await test_websocket.send()
+        result = await test_websocket.receive()

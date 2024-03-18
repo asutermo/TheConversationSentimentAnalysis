@@ -5,10 +5,11 @@ from typing import List
 import feedparser  # type: ignore
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
-from quart import Quart, render_template, websocket  # type: ignore
 from quart_schema import QuartSchema  # type: ignore
 from textblob import TextBlob  # type: ignore
 from transformers import pipeline  # type: ignore
+
+from quart import Quart, render_template, websocket  # type: ignore
 
 app = Quart(__name__)
 QuartSchema(app)
@@ -56,9 +57,7 @@ SUMMARIZER = pipeline("summarization", model="facebook/bart-large-cnn")
 async def analyze_rss_feed_titles() -> ArticleSentimentList:
     """Takes an RSS feed, checks title for subjectivity and polarity and returns a list of ArticleSentiments"""
     feed = feedparser.parse(FEED_URL)
-    title_blobs = [
-        (entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries
-    ]
+    title_blobs = [(entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries]
     return ArticleSentimentList(
         [
             (
