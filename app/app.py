@@ -1,4 +1,5 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
+from logging.config import dictConfig
 from typing import List
 
 import feedparser
@@ -11,6 +12,18 @@ from transformers import pipeline
 
 app = Quart(__name__)
 QuartSchema(app)
+
+
+dictConfig(
+    {
+        "version": 1,
+        "loggers": {
+            "quart.app": {
+                "level": "ERROR",
+            },
+        },
+    }
+)
 
 
 @dataclass
@@ -50,7 +63,10 @@ async def analyze_rss_feed_titles() -> ArticleSentimentList:
         [
             (
                 ArticleSentiment(
-                    title, link, blob.sentiment.polarity, blob.sentiment.subjectivity
+                    title=title,
+                    original_link=link,
+                    polarity=blob.sentiment.polarity,
+                    subjectivity=blob.sentiment.subjectivity,
                 )
             )
             for title, link, blob in title_blobs
@@ -61,23 +77,26 @@ async def analyze_rss_feed_titles() -> ArticleSentimentList:
 async def analyze_article(title: str, url: str) -> ArticleSentiment:
     """Takes an article from The Conversation, grabs article text, and does both TextBlob and T5 analysis on it"""
     response = requests.get(url)
+    if response.status_code == 403:
+        app.logger.error("Unable to access content.")
+        raise Exception("Unable to access content.")
     soup = BeautifulSoup(response.text, "html.parser")
     article_body_html = soup.find("div", itemprop="articleBody")
-
     if article_body_html:
         article_body = article_body_html.get_text(strip=False)
     else:
-        return None
+        app.logger.error("No article body found.")
+        raise Exception("No article body found.")
 
     blob = TextBlob(article_body)
     summary = summarize_light(article_body)
     return ArticleSentiment(
-        title,
-        url,
-        blob.sentiment.polarity,
-        blob.sentiment.subjectivity,
-        article_body,
-        summary,
+        title=title,
+        original_link=url,
+        polarity=blob.sentiment.polarity,
+        subjectivity=blob.sentiment.subjectivity,
+        text=article_body,
+        summarization=summary,
     )
 
 
@@ -102,6 +121,7 @@ async def not_found(e):
 @app.errorhandler(500)
 async def internal_server_error(e):
     """This will 'catch' 500's and show user a 500 page. TODO: more info where it makes sense"""
+    app.logger.error(e)
     _ = getattr(e, "original_exception", None)
     return await render_template("500.html"), 500
 

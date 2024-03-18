@@ -24,6 +24,8 @@
                 console.log('WebSocket connection established');
 
                 // Send data to the server
+                console.log(article_title);
+                console.log(article_url);
                 ws.send(JSON.stringify({title: article_title, url: article_url}));
             };
    
