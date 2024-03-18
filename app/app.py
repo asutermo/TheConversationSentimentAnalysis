@@ -32,13 +32,13 @@ class ArticleSentiment:
     original_link: str
     polarity: float
     subjectivity: float
-    text: str = None
-    summarization: str = None
+    text: str = ''
+    summarization: str = ''
 
 
 @dataclass
 class ArticleSentimentList:
-    articles: List[ArticleSentiment] = None
+    articles: List[ArticleSentiment] = []
 
 
 @dataclass
