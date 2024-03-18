@@ -43,11 +43,11 @@ async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
     ]
     return [
         (
-            asdict(
-                ArticleSentiment(
-                    title, link, blob.sentiment.polarity, blob.sentiment.subjectivity
-                )
+           
+            ArticleSentiment(
+                title, link, blob.sentiment.polarity, blob.sentiment.subjectivity
             )
+            
         )
         for title, link, blob in title_blobs
     ]
