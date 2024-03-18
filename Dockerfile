@@ -5,7 +5,7 @@ RUN pip install -r /tmp/requirements.txt
 
 ENV PORT=5000
 ENV QUART_DIR=/app
-ENV QUART_APP=app:app
+ENV QUART_APP=main:app
 
 COPY /app/ $QUART_DIR
 WORKDIR /app

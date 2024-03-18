@@ -22,7 +22,7 @@ To run locally:
 
 ```sh
 cd app
-hypercorn --reload --bind 0.0.0.0:5000 --workers 1 app:app
+hypercorn --reload --bind 0.0.0.0:5000 --workers 1 main:app
 ```
 
 ## Tests and Formatting

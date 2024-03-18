@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from logging.config import dictConfig
 from typing import List
 
@@ -38,7 +38,7 @@ class ArticleSentiment:
 
 @dataclass
 class ArticleSentimentList:
-    articles: List[ArticleSentiment] = []
+    articles: List[ArticleSentiment] = field(default_factory=list)
 
 
 @dataclass
