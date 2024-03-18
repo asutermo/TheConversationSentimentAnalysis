@@ -24,6 +24,11 @@ class ArticleSentiment:
 
 
 @dataclass
+class ArticleSentimentList:
+    articles: List[ArticleSentiment] = None
+
+
+@dataclass
 class ArticleSummarizationRequest:
     title: str
     url: str
@@ -35,13 +40,13 @@ FEED_URL = "https://theconversation.com/articles.atom?language=en"
 SUMMARIZER = pipeline("summarization", model="facebook/bart-large-cnn")
 
 
-async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
+async def analyze_rss_feed_titles() -> ArticleSentimentList:
     """Takes an RSS feed, checks title for subjectivity and polarity and returns a list of ArticleSentiments"""
     feed = feedparser.parse(FEED_URL)
     title_blobs = [
         (entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries
     ]
-    return [
+    return ArticleSentimentList([
         (
            
             ArticleSentiment(
@@ -50,7 +55,7 @@ async def analyze_rss_feed_titles() -> List[ArticleSentiment]:
             
         )
         for title, link, blob in title_blobs
-    ]
+    ])
 
 
 async def analyze_article(title: str, url: str) -> ArticleSentiment:
@@ -124,7 +129,7 @@ async def article(title: str):
 @app.websocket("/ws/feed")
 async def feed() -> None:
     summaries = await analyze_rss_feed_titles()
-    await websocket.send_as(summaries, List[ArticleSentiment])
+    await websocket.send_as(summaries, ArticleSentimentList)
 
 
 @app.websocket("/ws/summarize")

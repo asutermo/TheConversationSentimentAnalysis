@@ -2,9 +2,11 @@
 
 This is just a sample project built around Quart to do summarization and sentiment analysis of news articles from [The Conversation](https://theconversation.com/us/feeds). The Conversation uses a Creative Commons NoDerivatives license. Please note, that this site will not be officially hosted as summarization may fall under a 'remix' or 'transform' of the original material.
 
-## Flask / Quart
+## Technologies Used
 
-Quart is an async reimplementation of Flask. This is useful, especially for things like inference which may take some time.
+I chose to use Quart for this. Quart is an async reimplementation of Flask. This is useful, especially for things like inference which may take some time.
+
+I also utilize websockets to handle sending of information.
 
 ## Running
 
