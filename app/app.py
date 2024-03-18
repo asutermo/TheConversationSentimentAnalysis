@@ -46,16 +46,16 @@ async def analyze_rss_feed_titles() -> ArticleSentimentList:
     title_blobs = [
         (entry.title, entry.link, TextBlob(entry.title)) for entry in feed.entries
     ]
-    return ArticleSentimentList([
-        (
-           
-            ArticleSentiment(
-                title, link, blob.sentiment.polarity, blob.sentiment.subjectivity
+    return ArticleSentimentList(
+        [
+            (
+                ArticleSentiment(
+                    title, link, blob.sentiment.polarity, blob.sentiment.subjectivity
+                )
             )
-            
-        )
-        for title, link, blob in title_blobs
-    ])
+            for title, link, blob in title_blobs
+        ]
+    )
 
 
 async def analyze_article(title: str, url: str) -> ArticleSentiment:
