@@ -61,6 +61,11 @@
         
             ws.onerror = function(error) {
                 console.error('WebSocket error:', error);
+                spinner_div.style.display = 'none';
+             
+                const content_div = document.getElementById('article_content');
+                const error_node = document.createTextNode(`Unable to load content`);
+                content_div.appendChild(error_node);
             };
     
             ws.onclose = function() {
