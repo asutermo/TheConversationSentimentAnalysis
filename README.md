@@ -1,9 +1,6 @@
 # TheConversationSentimentAnalysis
-Sentiment Analysis on TheConversation. Very, very early in-progress
 
-## RSS Feed
-
-[The Conversation](https://theconversation.com/us/feeds)
+This is just a sample project built around Quart to do summarization and sentiment analysis of news articles from [The Conversation](https://theconversation.com/us/feeds). The Conversation uses a Creative Commons NoDerivatives license. Please note, that this site will not be officially hosted as summarization may fall under a 'remix' or 'transform' of the original material.
 
 ## Flask / Quart
 
