@@ -30,7 +30,7 @@
             ws.onmessage = function(event) {
                 // Parse the JSON data
                 const article_summary = JSON.parse(event.data);
-                spinner_div.style.display = none;
+                spinner_div.style.display = 'none';
 
                 const content_div = document.getElementById('article_content');
 
