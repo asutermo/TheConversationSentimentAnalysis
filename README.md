@@ -18,3 +18,9 @@ hypercorn --reload --bind 0.0.0.0:5000 --workers 1 app:app
 ## Tests and Formatting
 
 I utilize tox for formatting and cleanliness. To run, go to the root of the repo and run 'tox' to run the tests/formatting.
+
+## TODO:
+
+- Add an example of CI/CD
+- Improved tests and code coverage
+- Have all tox formatting stuff pass
