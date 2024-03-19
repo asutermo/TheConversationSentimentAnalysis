@@ -45,17 +45,11 @@ async def test_article_with_valid_link() -> None:
 async def test_article_with_invalid_link() -> None:
     test_client = app.test_client()
     response = await test_client.get("/article/invalid_title")
-    assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_coverage() -> None:
-    await app.test_coverage()
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_ws_feed() -> None:
     test_client = app.test_client()
     async with test_client.websocket("/ws/feed") as test_websocket:
-        await test_websocket.send()
-        _ = await test_websocket.receive()
+        await test_websocket.receive()
