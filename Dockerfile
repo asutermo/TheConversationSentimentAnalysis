@@ -1,6 +1,6 @@
 FROM python:3.9
 
-COPY requirements_light.txt /tmp/requirements.txt
+COPY requirements_cpu.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 ENV PORT=5000
