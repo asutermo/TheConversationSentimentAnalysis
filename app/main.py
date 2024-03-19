@@ -47,6 +47,12 @@ class ArticleSummarizationRequest:
     url: str
 
 
+@dataclass
+class WebSocketError:
+    error_message: str
+    status_code: int
+
+
 FEED_URL = "https://theconversation.com/articles.atom?language=en"
 
 
@@ -126,6 +132,14 @@ async def internal_server_error(e: Exception) -> Tuple[str, int]:
     # could check original and show unhandled error
 
 
+async def handle_websocket_error(wse: WebSocketError) -> None:
+    """This serves as a generic websocket error handler"""
+    try:
+        await websocket.send(wse)
+    except Exception as e:
+        app.logger.error(f"Failed to send error message: {str(e)}")
+
+
 @app.route("/")
 async def index() -> Tuple[str, int]:
     """Just show base index page. /ws/feed is responsible for populating"""
@@ -146,16 +160,22 @@ async def article(title: str) -> Tuple[str, int]:
 
 @app.websocket("/ws/feed")
 async def feed() -> None:
-    summaries = await analyze_rss_feed_titles()
-    await websocket.send_as(summaries, ArticleSentimentList)
+    try:
+        summaries = await analyze_rss_feed_titles()
+        await websocket.send_as(summaries, ArticleSentimentList)
+    except Exception as e:  # make less generic
+        await handle_websocket_error(WebSocketError(str(e), 500))
 
 
 @app.websocket("/ws/summarize")
 async def summarize() -> None:
-    while True:
-        data = await websocket.receive_as(ArticleSummarizationRequest)
-        summary = await analyze_article(title=data.title, url=data.url)
-        await websocket.send_as(summary, ArticleSentiment)
+    try:
+        while True:
+            data = await websocket.receive_as(ArticleSummarizationRequest)
+            summary = await analyze_article(title=data.title, url=data.url)
+            await websocket.send_as(summary, ArticleSentiment)
+    except Exception as e:  # make less generic
+        await handle_websocket_error(WebSocketError(str(e), 500))
 
 
 if __name__ == "__main__":
