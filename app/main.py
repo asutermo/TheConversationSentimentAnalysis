@@ -1,15 +1,14 @@
 from dataclasses import dataclass, field
 from logging.config import dictConfig
-from typing import List
+from typing import List, Tuple
 
 import feedparser  # type: ignore
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
+from quart import Quart, render_template, websocket  # type: ignore
 from quart_schema import QuartSchema  # type: ignore
 from textblob import TextBlob  # type: ignore
 from transformers import pipeline  # type: ignore
-
-from quart import Quart, render_template, websocket  # type: ignore
 
 app = Quart(__name__)
 QuartSchema(app)
@@ -112,13 +111,13 @@ def summarize_light(article_text: str) -> str:
 
 
 @app.errorhandler(404)
-async def not_found(e):
+async def not_found(e: Exception) -> Tuple[str, int]:
     """This will 'catch' 404's and show a page not found."""
     return await render_template("404.html"), 404
 
 
 @app.errorhandler(500)
-async def internal_server_error(e):
+async def internal_server_error(e: Exception) -> Tuple[str, int]:
     """This will 'catch' 500's and show user a 500 page. TODO: more info where it makes sense"""
     app.logger.error(e)
     _ = getattr(e, "original_exception", None)
@@ -128,19 +127,19 @@ async def internal_server_error(e):
 
 
 @app.route("/")
-async def index():
+async def index() -> Tuple[str, int]:
     """Just show base index page. /ws/feed is responsible for populating"""
     return await render_template("index.html"), 200
 
 
 @app.route("/about/")
-async def about():
+async def about() -> Tuple[str, int]:
     """Basic about page"""
     return await render_template("about.html"), 200
 
 
 @app.route("/article/<title>")
-async def article(title: str):
+async def article(title: str) -> Tuple[str, int]:
     """Take an article, and do a deep dive on the content."""
     return await render_template("article.html"), 200
 
@@ -159,7 +158,7 @@ async def summarize() -> None:
         await websocket.send_as(summary, ArticleSentiment)
 
 
-async def test_coverage():
+async def test_coverage() -> None:
     pass
 
 
