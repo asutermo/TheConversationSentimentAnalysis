@@ -33,5 +33,3 @@ I utilize tox for formatting and cleanliness. To run, go to the root of the repo
 
 - Add an example of CI/CD
 - Improved tests and code coverage
-- Have all tox formatting stuff pass
-
