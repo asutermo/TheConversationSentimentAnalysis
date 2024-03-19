@@ -25,6 +25,7 @@ repository = "https://github.com/asutermo/TheConversationSentimentAnalysis/"
 hypothesis = "*"
 pytest = "*"
 pytest-asyncio = "*"
+torch = ">=2.0.1"
 tox = "*"
 
 [tool.poetry.extras]
